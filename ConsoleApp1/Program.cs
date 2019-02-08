@@ -13,11 +13,13 @@ namespace ConsoleApp1
         {
             Console.WriteLine("Test is running");
             string source = @"D:\RuntimeHDD\DotaXdWorkDir\test.txt";
+            string target = @"D:\RuntimeHDD\DotaXdWorkDir\testTarget.txt";
 
-            var injector = new VersionInjector(source, source);
+            var injector = new VersionInjector(source, target);
+            injector.Objectivation();
             injector.Inject();
 
-            foreach(var item in injector.ListSource)
+            foreach(var item in injector.ListTarget)
             {
                 Console.WriteLine(item.ToString());
             }

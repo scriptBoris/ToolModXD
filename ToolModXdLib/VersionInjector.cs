@@ -18,12 +18,10 @@ namespace ToolModXdLib
         public List<War3Object> ListSource { get; private set; } = new List<War3Object>();
         public List<War3Object> ListTarget { get; private set; } = new List<War3Object>();
 
-        private static PropertyInfo[] _fields;
+        public static readonly PropertyInfo[] PropsWar3Obj = typeof(War3Object).GetProperties();
 
         public VersionInjector(string pathSource, string pathTarget)
         {
-            _fields = typeof(War3Object).GetProperties();
-
             using (var sr = new StreamReader(pathSource) )
             {
                 string line;
@@ -45,21 +43,54 @@ namespace ToolModXdLib
             }
         }
 
-        private const string RegHeader = @"\[....\]";
+        public async Task Objectivation()
+        {
+            ObjectiveText(_sourceBody, ListSource, false);
+            ObjectiveText(_targetBody, ListTarget, true);
+        }
 
+        public async Task Inject()
+        {
+            foreach (var targetObj in ListTarget)
+            {
+                var sourceObj = ListSource.FirstOrDefault(x => x.Id == targetObj.Id);
+                if (sourceObj == null)
+                    continue;
+
+                foreach(var prop in PropsWar3Obj)
+                {
+                    if (prop.Name == nameof(War3Object.Id))
+                        continue;
+
+                    if (prop.Name == nameof(War3Object.GameBody))
+                        continue;
+
+                    if (prop.GetValue(sourceObj) == null)
+                        continue;
+
+                    string value = (string) prop.GetValue(sourceObj);
+                    prop.SetValue(targetObj, value);
+                }
+            }
+        }
+
+        private const string RegHeader = @"\[....\]";
         private War3Object lastWarObj;
 
-        public void DoObjective(List<string> body, List<War3Object> list)
+        private void ObjectiveText(List<string> body, List<War3Object> list, bool IsNeedUpGameInfo)
         {
-            for(int i = 0; i <= body.Count - 1; i++)
+            while(body.Count > 0)
             {
+                string line = body.First();
+                body.RemoveAt(0);
+
                 // Find ID
                 var reg = new Regex(RegHeader);
-                var match = reg.Match(body[i]);
+                var match = reg.Match(line);
                 if (match.Success)
                 {
                     lastWarObj = new War3Object(match.Value);
-                    ListSource.Add(lastWarObj);
+                    list.Add(lastWarObj);
                 }
                 else
                 {
@@ -67,12 +98,12 @@ namespace ToolModXdLib
                         continue;
 
                     // Find fields
-                    var split = body[i].Split('=');
+                    var split = line.Split('=');
                     if (split.Length == 0)
                         continue;
 
                     string bodyField = split[0];
-                    var matchField = _fields.FirstOrDefault(x => string.Equals(x.Name, bodyField, StringComparison.OrdinalIgnoreCase));
+                    var matchField = PropsWar3Obj.FirstOrDefault(x => string.Equals(x.Name, bodyField, StringComparison.OrdinalIgnoreCase));
                     if (matchField != null)
                     {
                         if (matchField.GetValue(lastWarObj) != null)
@@ -85,17 +116,12 @@ namespace ToolModXdLib
                         matchField.SetValue(lastWarObj, lineValue);
                     }
                     // Find exceptions fields
-                    else
+                    else if (IsNeedUpGameInfo)
                     {
-                        lastWarObj.GameBody.Add(body[i]);
+                        lastWarObj.GameBody.Add(line);
                     }
                 }
             }
-        }
-
-        public async Task Inject()
-        {
-            DoObjective(_sourceBody, ListSource);
         }
     }
 }

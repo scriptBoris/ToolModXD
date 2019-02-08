@@ -40,13 +40,13 @@ namespace ToolModXdLib.Models
         public override string ToString()
         {
             string res = "";
-            foreach(var prop in typeof(War3Object).GetProperties() )
+            foreach(var prop in VersionInjector.PropsWar3Obj)
             {
-                if (prop.Name == "Id")
+                if (prop.Name == nameof(Id))
                 {
                     res += (string) prop.GetValue(this) + "\n";
                 }
-                else if (prop.Name == "GameBody")
+                else if (prop.Name == nameof(GameBody))
                 {
                     foreach (var item in GameBody)
                         res += item + "\n";
