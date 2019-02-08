@@ -8,6 +8,10 @@ namespace ToolModXdLib.Models
 {
     public class War3Object
     {
+        /// <summary>
+        /// Идентификатор формата [A09F]
+        /// </summary>
+        public string Id { get; set; }
         public string Art { get; set; }
         public string Unart { get; set; }
         public string ResearchArt { get; set; }
@@ -26,5 +30,39 @@ namespace ToolModXdLib.Models
         public string EffectArt { get; set; }
         public string SpecialArt{ get; set; }
         public string AnimNames { get; set; }
+        public List<string> GameBody { get; set; } = new List<string>();
+
+        public War3Object(string id)
+        {
+            Id = id;
+        }
+
+        public override string ToString()
+        {
+            string res = "";
+            foreach(var prop in typeof(War3Object).GetProperties() )
+            {
+                if (prop.Name == "Id")
+                {
+                    res += (string) prop.GetValue(this) + "\n";
+                }
+                else if (prop.Name == "GameBody")
+                {
+                    foreach (var item in GameBody)
+                        res += item + "\n";
+                }
+                else
+                {
+                    string propValue = (string) prop.GetValue(this);
+                    if (propValue == null)
+                        continue;
+
+                    res += $"{prop.Name}={propValue}\n";
+                }
+            }
+            if (res == "")
+                return "none";
+            return res;
+        }
     }
 }

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolModXdLib", "ToolModXdLi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcluderLib", "ExcluderLib\ExcluderLib.csproj", "{B9732B4C-9713-44F2-BED5-EE3A5C40B262}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{C6C20D41-BBEC-4722-810E-A12B4BFAA823}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{B9732B4C-9713-44F2-BED5-EE3A5C40B262}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9732B4C-9713-44F2-BED5-EE3A5C40B262}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9732B4C-9713-44F2-BED5-EE3A5C40B262}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6C20D41-BBEC-4722-810E-A12B4BFAA823}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6C20D41-BBEC-4722-810E-A12B4BFAA823}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6C20D41-BBEC-4722-810E-A12B4BFAA823}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6C20D41-BBEC-4722-810E-A12B4BFAA823}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
