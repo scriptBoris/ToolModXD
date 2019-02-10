@@ -86,15 +86,11 @@ namespace ToolModXdLib
 
         private void Import(WarSylkItem from, WarSylkItem target)
         {
-            foreach(var targetItem in target.Data)
+            bool isChangedTargetData = false;
+            foreach(var fromItem in from.Data)
             {
-                if (target.RawCode == "K\"Nfir\"")
-                    Console.WriteLine("");
-
-                if (targetItem.Coordinate == "C;X38")
-                    Console.WriteLine("");
-
-                switch (targetItem.Id)
+                // filter
+                switch (fromItem.Id)
                 {
                     case 3:
                     case 5:
@@ -119,13 +115,22 @@ namespace ToolModXdLib
                         continue;
                 }
 
-                var fromItem = from.Data.FirstOrDefault(x => x.Id == targetItem.Id);
-                if (fromItem != null && targetItem.Value != fromItem.Value)
+                var targetItem = target.Data.FirstOrDefault(x => x.Id == fromItem.Id);
+                if (targetItem != null && fromItem.Value != targetItem.Value)
                 {
                     Echo($"{target.RawCode} get import {fromItem.Value}, old: {targetItem.Value}");
                     targetItem.Value = fromItem.Value;
                 }
+                else if (targetItem == null)
+                {
+                    Echo($"{target.RawCode} new value: {fromItem.Value}");
+                    target.Data.Add(new WarSylkProp(fromItem.Id, fromItem.Value, fromItem.Coordinate) );
+                    isChangedTargetData = true;
+                }
             }
+
+            if (isChangedTargetData)
+                target.Data.OrderBy(x => x.Id);
         }
 
         private const string RegColumnPatern = @"C;?.*X(\d*);+";

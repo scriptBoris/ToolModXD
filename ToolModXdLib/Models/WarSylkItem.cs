@@ -8,7 +8,14 @@ namespace ToolModXdLib.Models
 {
     public class WarSylkProp
     {
+        /// <summary>
+        /// Column in SLK file
+        /// </summary>
         public int Id { get; set; }
+
+
+        //public int Row { get; set; }
+
         public string Coordinate { get; set; }
         public string Value { get; set; }
 
