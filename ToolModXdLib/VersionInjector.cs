@@ -12,13 +12,16 @@ namespace ToolModXdLib
 {
     public class VersionInjector
     {
+        public event InjectorMsgHandler EventMessanger;
+        public delegate void InjectorMsgHandler(string msg);
+
         private List<string> _sourceBody = new List<string>();
         private List<string> _targetBody = new List<string>();
 
-        public List<War3Object> ListSource { get; private set; } = new List<War3Object>();
-        public List<War3Object> ListTarget { get; private set; } = new List<War3Object>();
+        public List<WarGameItem> ListSource { get; private set; } = new List<WarGameItem>();
+        public List<WarGameItem> ListTarget { get; private set; } = new List<WarGameItem>();
 
-        public static readonly PropertyInfo[] PropsWar3Obj = typeof(War3Object).GetProperties();
+        public static readonly PropertyInfo[] PropsWar3Obj = typeof(WarGameItem).GetProperties();
 
         public VersionInjector(string pathSource, string pathTarget)
         {
@@ -43,13 +46,13 @@ namespace ToolModXdLib
             }
         }
 
-        public async Task Objectivation()
+        public void Objectivation()
         {
             ObjectiveText(_sourceBody, ListSource, false);
             ObjectiveText(_targetBody, ListTarget, true);
         }
 
-        public async Task Inject()
+        public void Inject()
         {
             foreach (var targetObj in ListTarget)
             {
@@ -59,25 +62,49 @@ namespace ToolModXdLib
 
                 foreach(var prop in PropsWar3Obj)
                 {
-                    if (prop.Name == nameof(War3Object.Id))
+                    if (prop.Name == nameof(WarGameItem.Id))
                         continue;
 
-                    if (prop.Name == nameof(War3Object.GameBody))
+                    if (prop.Name == nameof(WarGameItem.GameBody))
                         continue;
 
                     if (prop.GetValue(sourceObj) == null)
                         continue;
 
-                    string value = (string) prop.GetValue(sourceObj);
-                    prop.SetValue(targetObj, value);
+                    string newValue = (string) prop.GetValue(sourceObj);
+                    string oldValue = (string) prop.GetValue(targetObj);
+                    if (newValue != oldValue)
+                    {
+                        prop.SetValue(targetObj, newValue);
+                        Echo($"{targetObj.Id} get import: {newValue} old: {oldValue}");
+                    }
                 }
             }
         }
 
-        private const string RegHeader = @"\[....\]";
-        private War3Object lastWarObj;
+        public void SaveResult(string dirPath)
+        {
+            string path = Path.Combine(dirPath, "commonabilitystrings.txt");
+            using (var sw = File.CreateText(path))
+            {
+                foreach (var target in ListTarget)
+                {
+                    sw.WriteLine(target.ToString());
+                }
+            }
 
-        private void ObjectiveText(List<string> body, List<War3Object> list, bool IsNeedUpGameInfo)
+            Echo("Result is saved in: " + path);
+        }
+
+        private void Echo(string msg)
+        {
+            EventMessanger?.Invoke(msg);
+        }
+
+        private const string RegHeader = @"\[....\]";
+        private WarGameItem lastWarObj;
+
+        private void ObjectiveText(List<string> body, List<WarGameItem> list, bool IsNeedUpGameInfo)
         {
             while(body.Count > 0)
             {
@@ -89,7 +116,7 @@ namespace ToolModXdLib
                 var match = reg.Match(line);
                 if (match.Success)
                 {
-                    lastWarObj = new War3Object(match.Value);
+                    lastWarObj = new WarGameItem(match.Value);
                     list.Add(lastWarObj);
                 }
                 else

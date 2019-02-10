@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ToolModXdLib.Models
 {
-    public class War3Object
+    public class WarGameItem
     {
         /// <summary>
         /// Идентификатор формата [A09F]
@@ -32,7 +32,7 @@ namespace ToolModXdLib.Models
         public string AnimNames { get; set; }
         public List<string> GameBody { get; set; } = new List<string>();
 
-        public War3Object(string id)
+        public WarGameItem(string id)
         {
             Id = id;
         }

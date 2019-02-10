@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolModXD", "ToolModXD\ToolModXD.csproj", "{7CEADBDA-CC1E-42B9-A08F-DC918860B546}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolModXdGui", "ToolModXD\ToolModXdGui.csproj", "{7CEADBDA-CC1E-42B9-A08F-DC918860B546}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolModXdLib", "ToolModXdLib\ToolModXdLib.csproj", "{E14FA0A8-91A6-4EAC-9338-40CD42A4F1D3}"
 EndProject

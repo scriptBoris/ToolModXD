@@ -8,5 +8,9 @@ namespace ExcluderLib
 {
     public class Exculuder
     {
+        public Exculuder()
+        {
+            //var activeX = new MSComctlLib.
+        }
     }
 }
