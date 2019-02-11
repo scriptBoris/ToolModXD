@@ -16,7 +16,9 @@ namespace ToolModXdLib.Models
         public string Unart { get; set; }
         public string ResearchArt { get; set; }
         public string MissileArt { get; set; }
+        public string LightningEffect { get; set; }
         public string BuffArt { get; set; }
+        public string AreaEffectArt { get; set; }
         public string TargetArt { get; set; }
         public string TargetAttach { get; set; }
         public string TargetAttach1 { get; set; }
@@ -27,8 +29,16 @@ namespace ToolModXdLib.Models
         public string TargetAttachCount { get; set; }
         public string CasterArt { get; set; }
         public string CasterAttach { get; set; }
+        public string CasterAattach1 { get; set; }
+        public string CasterAattach2 { get; set; }
+        public string CasterAattach3 { get; set; }
+        public string CasterAattach4 { get; set; }
+        public string CasterAattach5 { get; set; }
+        public string CasterAttachCount { get; set; }
         public string EffectArt { get; set; }
+        public string EffectSound { get; set; }
         public string SpecialArt{ get; set; }
+        public string SpecialAttach { get; set; }
         public string AnimNames { get; set; }
         public List<string> GameBody { get; set; } = new List<string>();
 
