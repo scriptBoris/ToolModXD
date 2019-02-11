@@ -20,41 +20,41 @@ namespace ConsoleApp1
 
             int trigger = 1;
 
-            if (trigger == 1 || trigger == 3)
-            {
-                var injector = new VersionInjectorSlk(source, target);
-                injector.EventMessanger += OnMessanger;
+            //if (trigger == 1 || trigger == 3)
+            //{
+            //    var injector = new VersionInjectorSlk(source, target);
+            //    injector.EventMessanger += OnMessanger;
 
-                injector.Objectivation();
+            //    injector.Objectivation();
 
-                Console.WriteLine("\nStarting inject...");
-                Thread.Sleep(500);
-                injector.Inject();
+            //    Console.WriteLine("\nStarting inject...");
+            //    Thread.Sleep(500);
+            //    injector.Inject();
 
-                Console.WriteLine("\nStarting extract result...");
-                Thread.Sleep(500);
-                injector.SaveResult(path); 
-            }
+            //    Console.WriteLine("\nStarting extract result...");
+            //    Thread.Sleep(500);
+            //    injector.SaveResult(path); 
+            //}
 
-            if (trigger == 2 || trigger == 3)
-            {
-                string source2 = @"D:\RuntimeHDD\DotaXdWorkDir\83\commonabilitystrings.txt";
-                string target2 = @"D:\RuntimeHDD\DotaXdWorkDir\85.269\origins\commonabilitystrings.txt";
-                var injector2 = new VersionInjector(source2, target2);
-                injector2.EventMessanger += OnMessanger;
+            //if (trigger == 2 || trigger == 3)
+            //{
+            //    string source2 = @"D:\RuntimeHDD\DotaXdWorkDir\83\commonabilitystrings.txt";
+            //    string target2 = @"D:\RuntimeHDD\DotaXdWorkDir\85.269\origins\commonabilitystrings.txt";
+            //    var injector2 = new VersionInjector(source2, target2);
+            //    injector2.EventMessanger += OnMessanger;
 
-                Console.WriteLine("\nObjectivation...");
-                Thread.Sleep(500);
-                injector2.Objectivation();
+            //    Console.WriteLine("\nObjectivation...");
+            //    Thread.Sleep(500);
+            //    injector2.Objectivation();
 
-                Console.WriteLine("\nStarting inject...");
-                Thread.Sleep(500);
-                injector2.Inject();
+            //    Console.WriteLine("\nStarting inject...");
+            //    Thread.Sleep(500);
+            //    injector2.Inject();
 
-                Console.WriteLine("\nStarting extract result...");
-                Thread.Sleep(500);
-                injector2.SaveResult(path); 
-            }
+            //    Console.WriteLine("\nStarting extract result...");
+            //    Thread.Sleep(500);
+            //    injector2.SaveResult(path); 
+            //}
 
 
 

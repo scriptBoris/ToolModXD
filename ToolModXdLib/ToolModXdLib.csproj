@@ -41,7 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IVersionInjector.cs" />
     <Compile Include="Models\WarSylkItem.cs" />
+    <Compile Include="ToolMod.cs" />
     <Compile Include="VersionInjector.cs" />
     <Compile Include="Models\WarGameItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

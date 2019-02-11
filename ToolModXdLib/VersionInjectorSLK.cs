@@ -6,21 +6,23 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ToolModXdLib.Models;
+using static ToolModXdLib.ToolMod;
 
 namespace ToolModXdLib
 {
-    public class VersionInjectorSlk
+    public class VersionInjectorSlk : IVersionInjector
     {
-        public event InjectorMsgHandler EventMessanger;
-        public delegate void InjectorMsgHandler(string msg);
-
         private List<string> _sourceBody = new List<string>();
-        private List<string> _targetBody = new List<string>();
+        private List<WarSylkItem> _listTarget = new List<WarSylkItem>();
 
+        public event InjectorMsgHandler EventMessanger;
         public List<WarSylkItem> ListSource { get; private set; } = new List<WarSylkItem>();
-        public List<WarSylkItem> ListTarget { get; private set; } = new List<WarSylkItem>();
 
-        public VersionInjectorSlk(string pathSource, string pathTarget)
+        public VersionInjectorSlk()
+        {
+        }
+
+        public async Task Read(string pathSource)
         {
             using (var sr = new StreamReader(pathSource))
             {
@@ -31,26 +33,24 @@ namespace ToolModXdLib
                 }
                 sr.Close();
             }
+        }
 
-            using (var sr = new StreamReader(pathTarget))
+        public async Task Objectivation(bool isLoadGameplayData)
+        {
+            ObjectiveText(_sourceBody, ListSource, isLoadGameplayData);
+        }
+
+        public async Task Inject(List<object> listArg)
+        {
+            try
             {
-                string line;
-                while ((line = sr.ReadLineAsync().Result) != null)
-                {
-                    _targetBody.Add(line);
-                }
-                sr.Close();
+                _listTarget = listArg.Cast<WarSylkItem>().ToList();
             }
-        }
+            catch (Exception)
+            {
+                return;
+            }
 
-        public void Objectivation()
-        {
-            ObjectiveText(_sourceBody, ListSource, false);
-            ObjectiveText(_targetBody, ListTarget, true);
-        }
-
-        public void Inject()
-        {
             while (ListSource.Count > 0)
             {
                 var source = ListSource.First();
@@ -61,7 +61,7 @@ namespace ToolModXdLib
 
                 if (source.SystemLine == null)
                 {
-                    var target = ListTarget.FirstOrDefault(x => x.RawCode == source.RawCode);
+                    var target = _listTarget.FirstOrDefault(x => x.RawCode == source.RawCode);
                     if (target != null)
                     {
                         Import(source, target);
@@ -70,12 +70,12 @@ namespace ToolModXdLib
             }
         }
 
-        public void SaveResult(string dirPath)
+        public async Task SaveResult(string dirPath)
         {
             string path = Path.Combine(dirPath, "UnitUI.slk");
             using (var sw = File.CreateText(path))
             {
-                foreach (var target in ListTarget)
+                foreach (var target in _listTarget)
                 {
                     sw.WriteLine(target.ToString());
                 }
@@ -84,7 +84,7 @@ namespace ToolModXdLib
             Echo("Result is saved in: " + path);
         }
 
-        private void Import(WarSylkItem from, WarSylkItem target)
+        private async Task Import(WarSylkItem from, WarSylkItem target)
         {
             bool isChangedTargetData = false;
             foreach(var fromItem in from.Data)

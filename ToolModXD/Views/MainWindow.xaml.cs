@@ -12,8 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ToolModXdGui.ViewModels;
 
-namespace ToolModXD
+namespace ToolModXDGui.Views
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
@@ -23,6 +24,7 @@ namespace ToolModXD
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainViewModel();
         }
     }
 }
