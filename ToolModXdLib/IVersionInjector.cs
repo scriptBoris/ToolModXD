@@ -12,12 +12,14 @@ namespace ToolModXdLib
     {
         event InjectorMsgHandler EventMessanger;
 
-        Task Read(string filePath);
+        void Read(string filePath);
 
-        Task Objectivation(bool IsLoadGameplayData);
+        void Objectivation(bool IsLoadGameplayData);
 
-        Task Inject(List<object> targetList);
+        void LoadTarget(string filePath);
 
-        Task SaveResult(string dirPath);
+        void Inject();
+
+        void SaveResult(string dirPath);
     }
 }

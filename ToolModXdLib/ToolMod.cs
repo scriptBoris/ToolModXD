@@ -8,24 +8,17 @@ using System.Threading.Tasks;
 
 namespace ToolModXdLib
 {
-    public class ToolMod : IVersionInjector
+    public class ToolMod
     {
         private IVersionInjector _protocol;
+        private string origin;
+        private string target;
 
         public event InjectorMsgHandler EventMessanger;
 
-        public ToolMod()
+        public ToolMod(string pathFile)
         {
-            EventMessanger?.Invoke("ToolModXd is ready");
-        }
-
-        private void OnEventMessanger(string msg)
-        {
-            EventMessanger?.Invoke(msg);
-        }
-
-        public bool OpenFile(string pathFile)
-        {
+            origin = pathFile;
             if (Path.GetExtension(pathFile) == ".slk")
                 _protocol = new VersionInjectorSlk();
             else if (Path.GetExtension(pathFile) == ".txt")
@@ -36,30 +29,35 @@ namespace ToolModXdLib
             if (_protocol != null)
             {
                 _protocol.EventMessanger += OnEventMessanger;
-                return true;
+                EventMessanger?.Invoke("ToolModXd is ready\n");
+                _protocol.Read(pathFile);
+                _protocol.Objectivation(false);
             }
-
-            return false;
         }
 
-        public async Task Inject(List<object> targetList)
+        public void LoadTarget(string path)
         {
-            await _protocol.Inject(targetList);
+            target = path;
+            EventMessanger?.Invoke($"\nStart load target: {path}");
+            _protocol.LoadTarget(path);
         }
 
-        public async Task Objectivation(bool IsLoadGameplayData)
+        public void Inject()
         {
-            await _protocol.Objectivation(IsLoadGameplayData);
+            EventMessanger?.Invoke($"\nStart inject target: {origin} to -> {target}");
+            _protocol.Inject();
         }
 
-        public async Task Read(string filePath)
+        public void SaveResult(string dirPath)
         {
-            await _protocol.Read(filePath);
+            EventMessanger?.Invoke($"\nStart procedure save results: {dirPath}");
+            _protocol.SaveResult(dirPath);
+            EventMessanger?.Invoke($"\nCOMPLETE!");
         }
 
-        public async Task SaveResult(string dirPath)
+        private void OnEventMessanger(string msg)
         {
-            await _protocol.SaveResult(dirPath);
+            EventMessanger?.Invoke(msg);
         }
     }
 }

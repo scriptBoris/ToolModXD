@@ -22,12 +22,12 @@ namespace ToolModXdLib
         {
         }
 
-        public async Task Read(string pathSource)
+        public void Read(string pathSource)
         {
             using (var sr = new StreamReader(pathSource))
             {
-                string line;
-                while ((line = sr.ReadLineAsync().Result) != null)
+                string line = sr.ReadLine();
+                while (line != null)
                 {
                     _sourceBody.Add(line);
                 }
@@ -35,22 +35,31 @@ namespace ToolModXdLib
             }
         }
 
-        public async Task Objectivation(bool isLoadGameplayData)
+        public void Objectivation(bool isLoadGameplayData)
         {
             ObjectiveText(_sourceBody, ListSource, isLoadGameplayData);
         }
 
-        public async Task Inject(List<object> listArg)
+        public void LoadTarget(string filePath)
         {
-            try
+            var targetList = new List<string>();
+            Echo($"Read target file: {filePath}");
+            using (var sr = new StreamReader(filePath))
             {
-                _listTarget = listArg.Cast<WarSylkItem>().ToList();
-            }
-            catch (Exception)
-            {
-                return;
+                string line = sr.ReadLine();
+                while (line != null)
+                {
+                    targetList.Add(line);
+                }
+                sr.Close();
             }
 
+            Echo($"Start procedure objectivation {filePath}");
+            ObjectiveText(targetList, _listTarget, true);
+        }
+
+        public void Inject()
+        {
             while (ListSource.Count > 0)
             {
                 var source = ListSource.First();
@@ -70,7 +79,7 @@ namespace ToolModXdLib
             }
         }
 
-        public async Task SaveResult(string dirPath)
+        public void SaveResult(string dirPath)
         {
             string path = Path.Combine(dirPath, "UnitUI.slk");
             using (var sw = File.CreateText(path))
@@ -84,7 +93,7 @@ namespace ToolModXdLib
             Echo("Result is saved in: " + path);
         }
 
-        private async Task Import(WarSylkItem from, WarSylkItem target)
+        private void Import(WarSylkItem from, WarSylkItem target)
         {
             bool isChangedTargetData = false;
             foreach(var fromItem in from.Data)

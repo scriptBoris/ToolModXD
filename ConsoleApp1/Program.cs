@@ -10,6 +10,7 @@ namespace ConsoleApp1
 {
     class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
             Console.WriteLine("Test is running");
@@ -18,7 +19,7 @@ namespace ConsoleApp1
             string source = @"D:\RuntimeHDD\DotaXdWorkDir\83\UnitUI.slk";
             string target = @"D:\RuntimeHDD\DotaXdWorkDir\85.269\origins\UnitUI.slk";
 
-            int trigger = 1;
+            int trigger = 2;
 
             //if (trigger == 1 || trigger == 3)
             //{
@@ -36,25 +37,23 @@ namespace ConsoleApp1
             //    injector.SaveResult(path); 
             //}
 
-            //if (trigger == 2 || trigger == 3)
-            //{
-            //    string source2 = @"D:\RuntimeHDD\DotaXdWorkDir\83\commonabilitystrings.txt";
-            //    string target2 = @"D:\RuntimeHDD\DotaXdWorkDir\85.269\origins\commonabilitystrings.txt";
-            //    var injector2 = new VersionInjector(source2, target2);
-            //    injector2.EventMessanger += OnMessanger;
+            if (trigger == 2 || trigger == 3)
+            {
+                string source2 = @"D:\RuntimeHDD\DotaXdWorkDir\83\commonabilitystrings.txt";
+                string target2 = @"D:\RuntimeHDD\DotaXdWorkDir\85.269\origins\commonabilitystrings.txt";
 
-            //    Console.WriteLine("\nObjectivation...");
-            //    Thread.Sleep(500);
-            //    injector2.Objectivation();
+                var toolmod = new ToolMod(source2);
+                toolmod.EventMessanger += OnMessanger;
 
-            //    Console.WriteLine("\nStarting inject...");
-            //    Thread.Sleep(500);
-            //    injector2.Inject();
+                Thread.Sleep(500);
+                toolmod.LoadTarget(target2);
 
-            //    Console.WriteLine("\nStarting extract result...");
-            //    Thread.Sleep(500);
-            //    injector2.SaveResult(path); 
-            //}
+                Thread.Sleep(500);
+                toolmod.Inject();
+
+                Thread.Sleep(500);
+                toolmod.SaveResult(path);
+            }
 
 
 
