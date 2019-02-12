@@ -6,18 +6,20 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using ToolModXdLib.Core;
 using ToolModXdLib.Models;
 
 namespace ToolModXdLib
 {
-    public class VersionInjector : IVersionInjector
+    internal class VersionInjector : IVersionInjector
     {
-        private List<WarGameItem> _listTarget = new List<WarGameItem>();
-        public List<WarGameItem> GameDataList { get; private set; } = new List<WarGameItem>();
+        internal static readonly PropertyInfo[] PropsWar3Obj = typeof(WarGameItem).GetProperties();
 
+        private List<WarGameItem> _listTarget = new List<WarGameItem>();
+        private List<WarGameItem> _listSource = new List<WarGameItem>();
         private List<string> _sourceBody = new List<string>();
+
         public event InjectorMsgHandler EventMessanger;
-        public static readonly PropertyInfo[] PropsWar3Obj = typeof(WarGameItem).GetProperties();
 
         public VersionInjector()
         {
@@ -39,7 +41,7 @@ namespace ToolModXdLib
 
         public void Objectivation(bool isLoadGameplayData)
         {
-            ObjectiveText(_sourceBody, GameDataList, isLoadGameplayData);
+            ObjectiveText(_sourceBody, _listSource, isLoadGameplayData);
         }
 
         /// <summary>
@@ -66,7 +68,7 @@ namespace ToolModXdLib
         {
             foreach (var targetObj in _listTarget)
             {
-                var sourceObj = GameDataList.FirstOrDefault(x => x.Id == targetObj.Id);
+                var sourceObj = _listSource.FirstOrDefault(x => x.Id == targetObj.Id);
                 if (sourceObj == null)
                     continue;
 
@@ -167,6 +169,35 @@ namespace ToolModXdLib
                     else if (IsNeedUpGameInfo)
                     {
                         lastWarObj.GameBody.Add(line);
+                    }
+                }
+            }
+        }
+
+        public void GetDataForListfile(ListFileInjector injector)
+        {
+            foreach (var item in _listSource)
+            {
+                foreach (var prop in PropsWar3Obj)
+                {
+                    string value = prop.GetValue(item) as string;
+                    if (value != null)
+                    {
+                        switch(prop.Name)
+                        {
+                            case nameof(WarGameItem.Art):
+                            case nameof(WarGameItem.Unart):
+                            case nameof(WarGameItem.ResearchArt):
+                            case nameof(WarGameItem.MissileArt):
+                            case nameof(WarGameItem.BuffArt):
+                            case nameof(WarGameItem.AreaEffectArt):
+                            case nameof(WarGameItem.TargetArt):
+                            case nameof(WarGameItem.CasterArt):
+                            case nameof(WarGameItem.EffectArt):
+                            case nameof(WarGameItem.SpecialArt):
+                                injector.Add(value);
+                                break;
+                        }
                     }
                 }
             }

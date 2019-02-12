@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ToolModXdLib.Models
 {
-    public class WarGameItem
+    internal class WarGameItem
     {
         /// <summary>
         /// Идентификатор формата [A09F]

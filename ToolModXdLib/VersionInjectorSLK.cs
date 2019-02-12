@@ -5,29 +5,29 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using ToolModXdLib.Core;
 using ToolModXdLib.Models;
-using static ToolModXdLib.ToolMod;
 
 namespace ToolModXdLib
 {
-    public class VersionInjectorSlk : IVersionInjector
+    internal class VersionInjectorSlk : IVersionInjector
     {
         private List<string> _sourceBody = new List<string>();
         private List<WarSylkItem> _listTarget = new List<WarSylkItem>();
+        private List<WarSylkItem> _listSource = new List<WarSylkItem>();
 
         public event InjectorMsgHandler EventMessanger;
-        public List<WarSylkItem> ListSource { get; private set; } = new List<WarSylkItem>();
 
         public VersionInjectorSlk()
         {
         }
 
-        public void Read(string pathSource)
+        public async void Read(string pathSource)
         {
             using (var sr = new StreamReader(pathSource))
             {
-                string line = sr.ReadLine();
-                while (line != null)
+                string line;
+                while ((line = await sr.ReadLineAsync()) != null)
                 {
                     _sourceBody.Add(line);
                 }
@@ -37,7 +37,7 @@ namespace ToolModXdLib
 
         public void Objectivation(bool isLoadGameplayData)
         {
-            ObjectiveText(_sourceBody, ListSource, isLoadGameplayData);
+            ObjectiveText(_sourceBody, _listSource, isLoadGameplayData);
         }
 
         public void LoadTarget(string filePath)
@@ -60,10 +60,10 @@ namespace ToolModXdLib
 
         public void Inject()
         {
-            while (ListSource.Count > 0)
+            while (_listSource.Count > 0)
             {
-                var source = ListSource.First();
-                ListSource.RemoveAt(0);
+                var source = _listSource.First();
+                _listSource.RemoveAt(0);
 
                 if (source.NumberRow == 1)
                     continue;
@@ -96,7 +96,7 @@ namespace ToolModXdLib
         private void Import(WarSylkItem from, WarSylkItem target)
         {
             bool isChangedTargetData = false;
-            foreach(var fromItem in from.Data)
+            foreach(var fromItem in from.Columns)
             {
                 // filter
                 switch (fromItem.Id)
@@ -124,7 +124,7 @@ namespace ToolModXdLib
                         continue;
                 }
 
-                var targetItem = target.Data.FirstOrDefault(x => x.Id == fromItem.Id);
+                var targetItem = target.Columns.FirstOrDefault(x => x.Id == fromItem.Id);
                 if (targetItem != null && fromItem.Value != targetItem.Value)
                 {
                     Echo($"{target.RawCode} get import {fromItem.Value}, old: {targetItem.Value}");
@@ -133,13 +133,13 @@ namespace ToolModXdLib
                 else if (targetItem == null)
                 {
                     Echo($"{target.RawCode} new value: {fromItem.Value}");
-                    target.Data.Add(new WarSylkProp(fromItem.Id, fromItem.Value, fromItem.Coordinate) );
+                    target.Columns.Add(new WarSylkColumn(fromItem.Id, fromItem.Value, fromItem.Coordinate) );
                     isChangedTargetData = true;
                 }
             }
 
             if (isChangedTargetData)
-                target.Data.OrderBy(x => x.Id);
+                target.Columns.OrderBy(x => x.Id);
         }
 
         private const string RegColumnPatern = @"C;?.*X(\d*);+";
@@ -150,11 +150,16 @@ namespace ToolModXdLib
 
         private void ObjectiveText(List<string> body, List<WarSylkItem> list, bool isNeedUpGameData)
         {
-            while (body.Count > 0)
+            int i = -1;
+            int max = body.Count - 1;
+            while (i <= max)
             {
-                string line = body.First();
+                i++;
+                string line = body[i];
                 bool isSystemLine = true;
-                body.RemoveAt(0);
+                //string line = body.First();
+                //if (line == null)
+                //    break;
 
                 // Find ID row
                 var reg = new Regex(RegRowPatern);
@@ -162,7 +167,7 @@ namespace ToolModXdLib
                 if (match.Success)
                 {
                     if (lastWarItem != null) // Event msg
-                        Echo(lastWarItem.ToString());
+                        Echo(lastWarItem.ToStringConsole());
 
                     int id = Convert.ToInt32(match.Groups[1].Value);
                     lastWarItem = new WarSylkItem(id);
@@ -193,7 +198,7 @@ namespace ToolModXdLib
                     else
                     {
                         if (lastWarItem != null) // Event msg
-                            Echo(lastWarItem.ToString());
+                            Echo(lastWarItem.ToStringConsole());
                         isSystemLine = true;
                     }
                 }
@@ -204,11 +209,22 @@ namespace ToolModXdLib
                     list.Add(new WarSylkItem(line));
                 }
             }
+
+            body.Clear();
+            Console.WriteLine("EndLoop");
         }
 
         private void Echo(string msg)
         {
             EventMessanger?.Invoke(msg);
+        }
+
+        public void GetDataForListfile(ListFileInjector injector)
+        {
+            foreach (var item in _listSource)
+            {
+                injector.Add(item.ModelPath);
+            }
         }
     }
 }

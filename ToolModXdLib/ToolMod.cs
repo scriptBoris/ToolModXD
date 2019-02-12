@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ToolModXdLib.Core;
+using ToolModXdLib.Models;
 
 namespace ToolModXdLib
 {
@@ -57,6 +59,11 @@ namespace ToolModXdLib
             EventMessanger?.Invoke($"\nStart procedure save results: {dirPath}");
             _protocol.SaveResult(dirPath);
             EventMessanger?.Invoke($"\nCOMPLETE!");
+        }
+
+        public void GetDataForListfile(ListFileInjector injector)
+        {
+            _protocol.GetDataForListfile(injector);
         }
 
         private void OnEventMessanger(string msg)
