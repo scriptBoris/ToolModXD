@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace ToolModXdGui.ViewModels
     public class MainViewModel : INotifyPropertyChanged
     {
         private ToolMod _toolMod;
+        private string _lastDir;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -29,9 +31,6 @@ namespace ToolModXdGui.ViewModels
         public MainViewModel()
         {
             OpenSource = new Command(SelectFile);
-
-            _toolMod = new ToolMod();
-            _toolMod.EventMessanger += OnEventMessanger;
         }
 
         private void OnEventMessanger(string msg)
@@ -43,16 +42,23 @@ namespace ToolModXdGui.ViewModels
         {
             var openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Text files (*.txt)|*.txt|Table SYLK (*.slk)|*.slk";
-            openFileDialog.InitialDirectory = Environment.CurrentDirectory;
+
+            if (_lastDir == null)
+                _lastDir = Environment.CurrentDirectory;
+
+            openFileDialog.InitialDirectory = _lastDir;
+
             if (openFileDialog.ShowDialog() == true)
             {
                 string path = openFileDialog.FileName;
-                bool valid = _toolMod.OpenFile(path);
-                if (valid)
+                _lastDir = Path.GetDirectoryName(path);
+                await Task.Run( () =>
                 {
-                    await _toolMod.Read(path);
-                    await _toolMod.Objectivation(false).ConfigureAwait(false);
-                }
+                    _toolMod = new ToolMod(path);
+                    _toolMod.EventMessanger += OnEventMessanger;
+
+                    _toolMod.Init();
+                });
             }
         }
     }

@@ -16,19 +16,45 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height=".1*"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height=".6*"/>
             <RowDefinition Height=".3*"/>
         </Grid.RowDefinitions>
 
-        <Button
+        <StackPanel Orientation="Horizontal"
             Grid.Column="0"
-            Grid.Row="0"
-            VerticalAlignment="Center"
-            HorizontalAlignment="Left"
-            Command="{Binding OpenSource}">
-            <TextBlock Text="OpenSource"/>
-        </Button>
+            Grid.Row="0">
+            <Button
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Margin="5"
+                Command="{Binding OpenSource}"
+                Background="#444444"
+                BorderBrush="Blue">
+                <TextBlock Text="OpenSource"
+                           Foreground="#BBBBBB"/>
+            </Button>
+            <Button
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Margin="5"
+                Command="{Binding Inject}"
+                Background="#444444"
+                BorderBrush="Blue">
+                <TextBlock Text="Do Inject"
+                       Foreground="#BBBBBB"/>
+            </Button>
+            <Button
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Margin="5"
+                Command="{Binding OpenTarget}"
+                Background="#444444"
+                BorderBrush="Blue">
+                <TextBlock Text="Open Target"
+                       Foreground="#BBBBBB"/>
+            </Button>
+        </StackPanel>
 
         <ListBox 
             ItemsSource="{Binding SourceList}"
@@ -74,7 +100,7 @@
                 BorderBrush="Black"
                 Margin="5,10,10,10" 
                 TextWrapping="Wrap" 
-                Text="Целевой файл"
+                Text="{Binding TextLog, Mode=TwoWay}"
                 Height="Auto"
                 Width="Auto"/>
         </ScrollViewer>

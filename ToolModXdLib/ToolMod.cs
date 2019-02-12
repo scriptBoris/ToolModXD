@@ -11,14 +11,14 @@ namespace ToolModXdLib
     public class ToolMod
     {
         private IVersionInjector _protocol;
-        private string origin;
-        private string target;
+        private string _origin;
+        private string _target;
 
         public event InjectorMsgHandler EventMessanger;
 
         public ToolMod(string pathFile)
         {
-            origin = pathFile;
+            _origin = pathFile;
             if (Path.GetExtension(pathFile) == ".slk")
                 _protocol = new VersionInjectorSlk();
             else if (Path.GetExtension(pathFile) == ".txt")
@@ -29,22 +29,26 @@ namespace ToolModXdLib
             if (_protocol != null)
             {
                 _protocol.EventMessanger += OnEventMessanger;
-                EventMessanger?.Invoke("ToolModXd is ready\n");
-                _protocol.Read(pathFile);
-                _protocol.Objectivation(false);
             }
+        }
+
+        public void Init()
+        {
+            _protocol.Read(_origin);
+            _protocol.Objectivation(false);
+            EventMessanger?.Invoke("ToolModXd is ready\n");
         }
 
         public void LoadTarget(string path)
         {
-            target = path;
+            _target = path;
             EventMessanger?.Invoke($"\nStart load target: {path}");
             _protocol.LoadTarget(path);
         }
 
         public void Inject()
         {
-            EventMessanger?.Invoke($"\nStart inject target: {origin} to -> {target}");
+            EventMessanger?.Invoke($"\nStart inject target: {_origin} to -> {_target}");
             _protocol.Inject();
         }
 
