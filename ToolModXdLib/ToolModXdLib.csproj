@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="Core\ListFileInjector.cs" />
     <Compile Include="IVersionInjector.cs" />
-    <Compile Include="IVisualData.cs" />
     <Compile Include="Models\WarSylkItem.cs" />
     <Compile Include="ToolMod.cs" />
     <Compile Include="VersionInjector.cs" />

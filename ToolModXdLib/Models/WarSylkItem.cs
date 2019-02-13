@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 
 namespace ToolModXdLib.Models
 {
-
     internal class WarSylkColumn
     {
         /// <summary>
-        /// Column in SLK file
+        /// Номер колонки
         /// </summary>
-        public int Id { get; set; }
+        public int ColumnId { get; set; }
 
         /// <summary>
         /// Данные ячейки которые были записаны в SLK, например C;X4;Y2
@@ -25,9 +24,15 @@ namespace ToolModXdLib.Models
         /// </summary>
         public string Value { get; set; }
 
-        public WarSylkColumn(int id, string value, string coord)
+        /// <summary>
+        /// Создает экземпляр ячейки строки, т.е. колонку
+        /// </summary>
+        /// <param name="columnId">Номер колонки</param>
+        /// <param name="value">Значение колонки</param>
+        /// <param name="coord">Координаты ячейки согласно SYLK, например "C;X7;Y33"</param>
+        public WarSylkColumn(int columnId, string value, string coord)
         {
-            Id = id;
+            ColumnId = columnId;
             Value = value;
             Coordinate = coord;
         }
@@ -60,47 +65,48 @@ namespace ToolModXdLib.Models
         /// </summary>
         public string SystemLine { get; set; }
 
-        public WarSylkItem(string line)
+        public WarSylkItem(int rowNumberInSlkFile, string line)
         {
+            NumberRow = rowNumberInSlkFile;
             SystemLine = line;
         }
 
-        public WarSylkItem(int id)
+        public WarSylkItem(int rowInSlkFile)
         {
-            NumberRow = id;
+            NumberRow = rowInSlkFile;
         }
 
-        public void AddValue(int index, string value, string coordinate)
+        public void AddValue(int columnId, string value, string coordinate)
         {
-            if (index == 1)
+            if (columnId == 1)
             {
                 RawCode = value;
-                Columns.Add(new WarSylkColumn(index, value, coordinate));
+                Columns.Add(new WarSylkColumn(columnId, value, coordinate));
                 return;
             }
-            else if (index == 3)
+            else if (columnId == 3)
             {
                 var reg = new Regex("\"(.*)\"");
                 var match = reg.Match(value);
                 if (match.Success)
                     ModelPath = match.Groups[1].Value;
 
-                Columns.Add(new WarSylkColumn(index, value, coordinate));
+                Columns.Add(new WarSylkColumn(columnId, value, coordinate));
                 return;
             }
 
             if (Columns.Count == 0)
             {
-                Columns.Add(new WarSylkColumn(index, value, coordinate) );
+                Columns.Add(new WarSylkColumn(columnId, value, coordinate) );
                 return;
             }
             else
             {
-                var find = Columns.FirstOrDefault(x => x.Id == index);
+                var find = Columns.FirstOrDefault(x => x.ColumnId == columnId);
                 if (find != null)
                     find.Value = value;
                 else
-                    Columns.Add(new WarSylkColumn(index, value, coordinate));
+                    Columns.Add(new WarSylkColumn(columnId, value, coordinate));
             }
         }
 
@@ -131,9 +137,11 @@ namespace ToolModXdLib.Models
             {
                 string result = $"{NumberRow}) ";
                 int i = 0;
+                int rowNext = NumberRow;
                 foreach (var prop in Columns)
                 {
-                    result += $"{prop.Coordinate}{prop.Value}";
+                    rowNext++;
+                    result += $"{rowNext}) {prop.Coordinate}{prop.Value}";
                     i++;
                     if (i < Columns.Count)
                         result += $"{Environment.NewLine}";

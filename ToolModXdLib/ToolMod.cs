@@ -66,6 +66,11 @@ namespace ToolModXdLib
             _protocol.GetDataForListfile(injector);
         }
 
+        public void InvokeMessage(string msg)
+        {
+            EventMessanger?.Invoke(msg);
+        }
+
         private void OnEventMessanger(string msg)
         {
             EventMessanger?.Invoke(msg);

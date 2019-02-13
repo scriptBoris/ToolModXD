@@ -22,17 +22,18 @@ namespace ToolModXdLib
         {
         }
 
-        public async void Read(string pathSource)
+        public void Read(string pathSource)
         {
             using (var sr = new StreamReader(pathSource))
             {
                 string line;
-                while ((line = await sr.ReadLineAsync()) != null)
+                while ((line = sr.ReadLine()) != null)
                 {
                     _sourceBody.Add(line);
                 }
                 sr.Close();
             }
+            Echo($"End read. Count: {_sourceBody.Count}");
         }
 
         public void Objectivation(bool isLoadGameplayData)
@@ -99,7 +100,7 @@ namespace ToolModXdLib
             foreach(var fromItem in from.Columns)
             {
                 // filter
-                switch (fromItem.Id)
+                switch (fromItem.ColumnId)
                 {
                     case 3:
                     case 5:
@@ -124,7 +125,7 @@ namespace ToolModXdLib
                         continue;
                 }
 
-                var targetItem = target.Columns.FirstOrDefault(x => x.Id == fromItem.Id);
+                var targetItem = target.Columns.FirstOrDefault(x => x.ColumnId == fromItem.ColumnId);
                 if (targetItem != null && fromItem.Value != targetItem.Value)
                 {
                     Echo($"{target.RawCode} get import {fromItem.Value}, old: {targetItem.Value}");
@@ -133,13 +134,13 @@ namespace ToolModXdLib
                 else if (targetItem == null)
                 {
                     Echo($"{target.RawCode} new value: {fromItem.Value}");
-                    target.Columns.Add(new WarSylkColumn(fromItem.Id, fromItem.Value, fromItem.Coordinate) );
+                    target.Columns.Add(new WarSylkColumn(fromItem.ColumnId, fromItem.Value, fromItem.Coordinate) );
                     isChangedTargetData = true;
                 }
             }
 
             if (isChangedTargetData)
-                target.Columns.OrderBy(x => x.Id);
+                target.Columns.OrderBy(x => x.ColumnId);
         }
 
         private const string RegColumnPatern = @"C;?.*X(\d*);+";
@@ -150,11 +151,10 @@ namespace ToolModXdLib
 
         private void ObjectiveText(List<string> body, List<WarSylkItem> list, bool isNeedUpGameData)
         {
-            int i = -1;
+            int i = 0;
             int max = body.Count - 1;
             while (i <= max)
             {
-                i++;
                 string line = body[i];
                 bool isSystemLine = true;
                 //string line = body.First();
@@ -169,8 +169,8 @@ namespace ToolModXdLib
                     if (lastWarItem != null) // Event msg
                         Echo(lastWarItem.ToStringConsole());
 
-                    int id = Convert.ToInt32(match.Groups[1].Value);
-                    lastWarItem = new WarSylkItem(id);
+                    int rowNumber = Convert.ToInt32(match.Groups[1].Value);
+                    lastWarItem = new WarSylkItem(i+1);
                     list.Add(lastWarItem);
                     isSystemLine = false;
                 }
@@ -205,9 +205,10 @@ namespace ToolModXdLib
 
                 if (isSystemLine && isNeedUpGameData)
                 {
-                    Echo(line);
-                    list.Add(new WarSylkItem(line));
+                    list.Add(new WarSylkItem(i+1, line));
                 }
+
+                i++;
             }
 
             body.Clear();
@@ -221,9 +222,13 @@ namespace ToolModXdLib
 
         public void GetDataForListfile(ListFileInjector injector)
         {
+            bool isFirst = true;
             foreach (var item in _listSource)
             {
-                injector.Add(item.ModelPath);
+                if (!isFirst)
+                    injector.Add(item.ModelPath);
+
+                isFirst = false;
             }
         }
     }
