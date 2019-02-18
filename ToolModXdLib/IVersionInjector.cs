@@ -10,9 +10,15 @@ namespace ToolModXdLib
 {
     public delegate void InjectorMsgHandler(string msg);
 
-    public interface IVersionInjector
+    internal interface IVersionInjector
     {
         event InjectorMsgHandler EventMessanger;
+
+        /// <summary>
+        /// Получает ячейку для редактирования в GUI
+        /// </summary>
+        /// <returns></returns>
+        List<CellEditor> GetCellsEditor();
 
         /// <summary>
         /// Читает файл построчно

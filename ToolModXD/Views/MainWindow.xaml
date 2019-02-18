@@ -17,10 +17,12 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height=".6*"/>
             <RowDefinition Height=".3*"/>
         </Grid.RowDefinitions>
 
+        <!--Header buttons-->
         <StackPanel Orientation="Horizontal"
             Grid.Column="0"
             Grid.Row="0">
@@ -31,7 +33,17 @@
                 Command="{Binding OpenSource}"
                 Background="#444444"
                 BorderBrush="Blue">
-                <TextBlock Text="OpenSource"
+                <TextBlock Text="Open source"
+                           Foreground="#BBBBBB"/>
+            </Button>
+            <Button
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Margin="5"
+                Command="{Binding SaveSource}"
+                Background="#444444"
+                BorderBrush="Blue">
+                <TextBlock Text="Save source"
                            Foreground="#BBBBBB"/>
             </Button>
             <Button
@@ -41,9 +53,13 @@
                 Command="{Binding Inject}"
                 Background="#444444"
                 BorderBrush="Blue">
-                <TextBlock Text="Do Inject"
+                <TextBlock Text="Do inject"
                        Foreground="#BBBBBB"/>
             </Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"
+            Grid.Column="1"
+            Grid.Row="0">
             <Button
                 VerticalAlignment="Center"
                 HorizontalAlignment="Left"
@@ -51,14 +67,25 @@
                 Command="{Binding OpenTarget}"
                 Background="#444444"
                 BorderBrush="Blue">
-                <TextBlock Text="Open Target"
+                <TextBlock Text="Open target"
+                       Foreground="#BBBBBB"/>
+            </Button>
+            <Button
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Margin="5"
+                Command="{Binding SaveTarget}"
+                Background="#444444"
+                BorderBrush="Blue">
+                <TextBlock Text="Save target"
                        Foreground="#BBBBBB"/>
             </Button>
         </StackPanel>
 
+        <!--Source-->
         <ListBox 
             ItemsSource="{Binding SourceList}"
-            Grid.Row="1"
+            Grid.Row="2"
             Grid.Column="0"
             Background="#252525"
             Foreground="#AAAAAA"
@@ -68,7 +95,28 @@
             Width="Auto">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Text}"/>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Header}"/>
+                        <!--Datas-->
+                        <ListBox 
+                            ItemsSource="{Binding Datas}"
+                            Background="#252525"
+                            Foreground="#AAAAAA"
+                            BorderBrush="Black"
+                            Margin="10,10,5,10" 
+                            Height="Auto"
+                            Width="Auto">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Key}"/>
+                                        <TextBlock Text="="/>
+                                        <TextBox Text="{Binding Value, Mode=TwoWay}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
@@ -76,7 +124,7 @@
         <ListBox 
             ItemsSource="{Binding TargetList}"
             Grid.Column="1"
-            Grid.Row="1"
+            Grid.Row="2"
             Background="#252525"
             Foreground="#AAAAAA"
             BorderBrush="Black"
@@ -93,7 +141,7 @@
         <!--Console-->
         <ScrollViewer
             Grid.ColumnSpan="2"
-            Grid.Row="2">
+            Grid.Row="3">
             <TextBox 
                 Background="#252525"
                 Foreground="#AAAAAA"

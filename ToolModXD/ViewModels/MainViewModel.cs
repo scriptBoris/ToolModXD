@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ToolModXdGui.Core;
 using ToolModXdLib;
+using ToolModXdLib.Models;
 
 namespace ToolModXdGui.ViewModels
 {
@@ -20,17 +21,22 @@ namespace ToolModXdGui.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ObservableCollection<Item> SourceList { get; set; } = new ObservableCollection<Item>() { new Item { Text = "test" } };
+        public ObservableCollection<CellEditor> SourceList { get; set; } = new ObservableCollection<CellEditor>();
 
         public ICommand OpenSource { get; set; }
 
         public ICommand OpenTarget { get; set; }
+
+        public ICommand SaveSource { get; set; }
+
+        public ICommand SaveTarget { get; set; }
 
         public string TextLog { get; set; }
 
         public MainViewModel()
         {
             OpenSource = new Command(SelectFile);
+            SaveSource = new Command(SaveSourceExe);
         }
 
         private void OnEventMessanger(string msg)
@@ -59,6 +65,28 @@ namespace ToolModXdGui.ViewModels
 
                     _toolMod.Init();
                 });
+
+                SourceList = new ObservableCollection<CellEditor>(_toolMod.GetCellsEditor() );
+            }
+        }
+
+        private async void SaveSourceExe()
+        {
+            var saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Text files (*.txt)|*.txt|Table SYLK (*.slk)|*.slk";
+            saveFileDialog.Title = "Save an Source file";
+
+            if (_lastDir == null)
+                _lastDir = Environment.CurrentDirectory;
+
+            saveFileDialog.InitialDirectory = _lastDir;
+
+            if (saveFileDialog.ShowDialog() == true && saveFileDialog.FileName != "")
+            {
+                string path = saveFileDialog.FileName;
+                _lastDir = Path.GetDirectoryName(path);
+
+                _toolMod.SaveResult(saveFileDialog.FileName);
             }
         }
     }

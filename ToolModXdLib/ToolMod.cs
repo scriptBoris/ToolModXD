@@ -71,6 +71,11 @@ namespace ToolModXdLib
             EventMessanger?.Invoke(msg);
         }
 
+        public List<CellEditor> GetCellsEditor()
+        {
+            return _protocol.GetCellsEditor();
+        }
+
         private void OnEventMessanger(string msg)
         {
             EventMessanger?.Invoke(msg);

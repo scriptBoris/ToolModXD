@@ -6,8 +6,17 @@ using System.Threading.Tasks;
 
 namespace ToolModXdGui.ViewModels
 {
-    public class Item
+    public class Cell
     {
-        public string Text { get; set; }
+        public string Header { get; set; }
+
+        public List<IData> Datas { get; set; } = new List<IData>();
+    }
+
+    public interface IData
+    {
+        string Key { get; set; }
+
+        string Value { get; set; }
     }
 }

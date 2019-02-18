@@ -38,7 +38,7 @@ namespace ToolModXdLib.Models
         }
     }
 
-    internal class WarSylkItem
+    internal class WarSylkItem : Warditor
     {
         /// <summary>
         /// Номер строки в SLK файле
@@ -148,6 +148,26 @@ namespace ToolModXdLib.Models
                 }
                 return result;
             }
+        }
+
+        public override CellEditor GetCellEditor()
+        {
+            var res = new CellEditor
+            {
+                Header = RawCode,
+                Source = this,
+            };
+
+            foreach (var item in Columns)
+            {
+                res.Datas.Add(new CellData
+                {
+                    Key = item.ColumnId.ToString(),
+                    Value = item.Value,
+                });
+            }
+
+            return res;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace ToolModXdLib.Core
 {
     public class ListFileInjector
     {
-        internal List<string> Datas { get; private set; } = new List<string>();
+        internal List<ListFileItem> Datas { get; private set; } = new List<ListFileItem>();
         private ToolMod _toolMod;
 
         public ListFileInjector(ToolMod toolMod)
@@ -28,48 +28,68 @@ namespace ToolModXdLib.Core
                 innerData = regWraperMatch.Groups[2].Value;
 
             // Если данные пришли через Запятую (текстуры)
-            var listNewData = new List<string>();
+            var listNewData = new List<ListFileItem>();
             var split = innerData.Split(',');
-            if (split.Length > 0)
-                listNewData = new List<string>(split);
+
+            if (split.Length == 0)
+            {
+                listNewData.Add(new ListFileItem { OriginValue = innerData });
+            }
             else
-                listNewData.Add(innerData);
+            {
+                foreach (var item in split)
+                {
+                    listNewData.Add(new ListFileItem
+                    {
+                        OriginValue = item
+                    });
+                }
+            }
 
             foreach (var item in listNewData)
             {
-                string newData = item;
-                bool isTexture = false;
+                string newData = item.OriginValue;
 
-                // Если данные без расширений
                 var regex = new Regex(@"(.*\.mdx|.*\.mdl|.*\.blp|.*\.tga)", RegexOptions.IgnoreCase);
                 var regMatch = regex.Match(newData);
+                // Если данные без расширений
                 if (regMatch.Success == false)
                 {
+                    item.IsNoFileExtension = true;
                     var regexBtn = new Regex(@"ReplaceableTextures.*");
                     var matchBtn = regexBtn.Match(newData);
                     // Если это текстура
                     if (matchBtn.Success)
-                        isTexture = true;
+                        item.War3Type = War3Types.Texture;
                     // Если это модель
                     else
-                        isTexture = false;
+                        item.War3Type = War3Types.Model;
                 }
 
                 // Определяем колизии
-                var match = Datas.FirstOrDefault( x => string.Equals(newData, x, StringComparison.OrdinalIgnoreCase));
+                var match = Datas.FirstOrDefault( x => string.Equals(newData, x.OriginValue, StringComparison.OrdinalIgnoreCase));
                 if (match == null)
                 {
-                    _toolMod.InvokeMessage($"extract listfile: \"{newData}\"");
-                    if (isTexture)
+                    // Если файл без расширения
+                    if (item.IsNoFileExtension)
                     {
-                        Datas.Add(newData + ".blp");
-                        Datas.Add(newData + ".tga");
+                        if (item.War3Type == War3Types.Texture)
+                        {
+                            item.LogicValues.Add(newData + ".blp");
+                            item.LogicValues.Add(newData + ".tga");
+                        }
+                        else
+                        {
+                            item.LogicValues.Add(newData + ".mdx");
+                            item.LogicValues.Add(newData + ".mdl");
+                        }
                     }
                     else
-                    {
-                        Datas.Add(newData + ".mdl");
-                        Datas.Add(newData + ".mdx");
-                    }
+                        // Если файл имеет расширение - просто добавляем
+                        item.LogicValues.Add(newData);
+
+                    Datas.Add(item);
+                    _toolMod.InvokeMessage($"extract listfile: \"{newData}\"");
                 }
             }
         }
@@ -83,7 +103,10 @@ namespace ToolModXdLib.Core
                
                 foreach (var line in Datas)
                 {
-                    await sw.WriteLineAsync(line);
+                    foreach (var item in line.LogicValues)
+                    {
+                        await sw.WriteLineAsync(item);
+                    }
                 }
             }
         }

@@ -15,8 +15,9 @@ namespace ToolModXdLib
     {
         internal static readonly PropertyInfo[] PropsWar3Obj = typeof(WarGameItem).GetProperties();
 
-        private List<WarGameItem> _listTarget = new List<WarGameItem>();
-        private List<WarGameItem> _listSource = new List<WarGameItem>();
+        private string _fileName;
+        private List<WarGameItem> _listTarget;
+        private List<WarGameItem> _listSource;
         private List<string> _sourceBody = new List<string>();
 
         public event InjectorMsgHandler EventMessanger;
@@ -27,6 +28,7 @@ namespace ToolModXdLib
 
         public void Read(string pathSource)
         {
+            _fileName = Path.GetFileName(pathSource);
             using (var sr = new StreamReader(pathSource))
             {
                 string line = "";
@@ -41,6 +43,7 @@ namespace ToolModXdLib
 
         public void Objectivation(bool isLoadGameplayData)
         {
+            _listSource = new List<WarGameItem>();
             ObjectiveText(_sourceBody, _listSource, isLoadGameplayData);
         }
 
@@ -50,6 +53,7 @@ namespace ToolModXdLib
         /// <param name="filePath">Целевой файл</param>
         public void LoadTarget(string filePath)
         {
+            _listTarget = new List<WarGameItem>();
             var targetList = new List<string>();
             using (var sr = new StreamReader(filePath))
             {
@@ -101,16 +105,26 @@ namespace ToolModXdLib
             }
         }
 
-        public void SaveResult(string dirPath)
+        public void SaveResult(string path)
         {
-            string path = Path.Combine(dirPath, "commonabilitystrings.txt");
-            using (var sw = File.CreateText(path))
-            {
-                foreach (var target in _listTarget)
+            //string path = Path.Combine(dirPath, _fileName);
+
+            if (_listTarget!= null)
+                using (var sw = File.CreateText(path))
                 {
-                    sw.WriteLine(target.ToString());
+                    foreach (var target in _listTarget)
+                    {
+                        sw.WriteLine(target.ToString());
+                    }
                 }
-            }
+            else if (_listSource != null)
+                using (var sw = File.CreateText(path))
+                {
+                    foreach (var src in _listSource)
+                    {
+                        sw.WriteLine(src.ToString());
+                    }
+                }
         }
 
         private void Echo(string msg)
@@ -201,6 +215,16 @@ namespace ToolModXdLib
                     }
                 }
             }
+        }
+
+        public List<CellEditor> GetCellsEditor()
+        {
+            var res = new List<CellEditor>();
+            foreach (var item in _listSource)
+            {
+                res.Add(item.GetCellEditor() );
+            }
+            return res;
         }
     }
 }

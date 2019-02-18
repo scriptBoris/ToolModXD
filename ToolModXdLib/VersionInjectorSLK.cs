@@ -231,5 +231,16 @@ namespace ToolModXdLib
                 isFirst = false;
             }
         }
+
+        public List<CellEditor> GetCellsEditor()
+        {
+            var res = new List<CellEditor>();
+            foreach (var item in _listSource)
+            {
+                res.Add(item.GetCellEditor() );
+            }
+
+            return res;
+        }
     }
 }
