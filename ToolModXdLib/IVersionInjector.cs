@@ -15,12 +15,6 @@ namespace ToolModXdLib
         event InjectorMsgHandler EventMessanger;
 
         /// <summary>
-        /// Получает ячейку для редактирования в GUI
-        /// </summary>
-        /// <returns></returns>
-        List<CellEditor> GetCellsEditor();
-
-        /// <summary>
         /// Читает файл построчно
         /// </summary>
         void Read(string filePath);
@@ -54,5 +48,11 @@ namespace ToolModXdLib
         /// </summary>
         /// <param name="injector">Лист в который необходимо добавить найденные данные</param>
         void GetDataForListfile(ListFileInjector injector);
+
+        /// <summary>
+        /// Получает ячейку для редактирования в GUI
+        /// </summary>
+        /// <returns></returns>
+        List<CellEditor> GetCellsEditor();
     }
 }

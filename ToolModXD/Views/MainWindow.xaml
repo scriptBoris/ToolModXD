@@ -7,8 +7,9 @@
     xmlns:local="clr-namespace:ToolModXdGui.ViewModels"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=local:MainViewModel, IsDesignTimeCreatable=True}"
+    
     Background="#222222"
-    Title="MainWindow" Height="650" Width="800">
+    Title="ToolMod" Height="650" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*"/>
@@ -99,17 +100,22 @@
                         <TextBlock Text="{Binding Header}"/>
                         <!--Datas-->
                         <ListBox 
+                            ScrollViewer.VerticalScrollBarVisibility="Auto"
                             ItemsSource="{Binding Datas}"
-                            Background="#252525"
+                            ForceCursor="False"
+                            Background="Transparent"
                             Foreground="#AAAAAA"
-                            BorderBrush="Black"
-                            Margin="10,10,5,10" 
+                            BorderBrush="Transparent"
+                            Margin="10,2,5,10" 
                             Height="Auto"
                             Width="Auto">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Key}"/>
+                                        <TextBlock Text="{Binding Key}"
+                                                   ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                                   
+                                                   Style="{StaticResource listItemm}"/>
                                         <TextBlock Text="="/>
                                         <TextBox Text="{Binding Value, Mode=TwoWay}"/>
                                     </StackPanel>

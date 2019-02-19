@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace ToolModXdLib.Models
 {
+    public delegate void CellChanged(object sender, object origin, string value);
+
     public class CellEditor : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -15,17 +18,31 @@ namespace ToolModXdLib.Models
 
         public string Header { get; set; }
 
-        public List<CellData> Datas { get; set; } = new List<CellData>();
+        public ObservableCollection<CellData> Datas { get; set; } = new ObservableCollection<CellData>();
 
     }
 
-    public class CellData : INotifyPropertyChanged
+    public class CellData
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        private string _value;
+
+        public IData Data { get; set; }
 
         public string Key { get; set; }
 
-        public string Value { get; set; }
+        public string Value {
+            get { return _value; }
+            set {
+                _value = value;
 
+                if (Data != null)
+                    Data.Refresh(Key, value);
+            }
+        }
+    }
+
+    public interface IData
+    {
+        void Refresh(string propname, string newValue);
     }
 }

@@ -45,7 +45,6 @@
     <Compile Include="IVersionInjector.cs" />
     <Compile Include="Models\CellEditor.cs" />
     <Compile Include="Models\ListFileItem.cs" />
-    <Compile Include="Models\Warditor.cs" />
     <Compile Include="Models\WarSylkItem.cs" />
     <Compile Include="ToolMod.cs" />
     <Compile Include="VersionInjector.cs" />

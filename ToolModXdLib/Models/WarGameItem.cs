@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ToolModXdLib.Models
 {
-    internal class WarGameItem : Warditor
+    internal class WarGameItem : IData
     {
         /// <summary>
         /// Идентификатор формата [A09F]
@@ -47,7 +48,9 @@ namespace ToolModXdLib.Models
         {
             Id = id;
         }
-        
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public override string ToString()
         {
             string res = "";
@@ -76,7 +79,7 @@ namespace ToolModXdLib.Models
             return res;
         }
 
-        public override CellEditor GetCellEditor()
+        public CellEditor GetCellEditor()
         {
             var res = new CellEditor
             {
@@ -93,15 +96,30 @@ namespace ToolModXdLib.Models
                     if (propValue == null)
                         continue;
 
-                    res.Datas.Add(new CellData
+                    var cell = new CellData()
                     {
                         Key = propName,
                         Value = propValue,
-                    });
+                        Data = this,
+                    };
+
+                    res.Datas.Add(cell);
                 }
             }
 
             return res;
+        }
+
+        public void Refresh(string propname, string newValue)
+        {
+            foreach (var prop in VersionInjector.PropsWar3Obj)
+            {
+                if (prop.Name == propname)
+                {
+                    prop.SetValue(this, newValue);
+                    return;
+                }
+            }
         }
     }
 }

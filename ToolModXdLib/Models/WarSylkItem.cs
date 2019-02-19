@@ -38,7 +38,7 @@ namespace ToolModXdLib.Models
         }
     }
 
-    internal class WarSylkItem : Warditor
+    internal class WarSylkItem : IData
     {
         /// <summary>
         /// Номер строки в SLK файле
@@ -150,7 +150,13 @@ namespace ToolModXdLib.Models
             }
         }
 
-        public override CellEditor GetCellEditor()
+        // Interface
+        public void Refresh(string key, string value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public CellEditor GetCellEditor()
         {
             var res = new CellEditor
             {
@@ -160,11 +166,13 @@ namespace ToolModXdLib.Models
 
             foreach (var item in Columns)
             {
-                res.Datas.Add(new CellData
+                var cell = new CellData
                 {
                     Key = item.ColumnId.ToString(),
                     Value = item.Value,
-                });
+                    Data = this,
+                };
+                res.Datas.Add(cell);
             }
 
             return res;
