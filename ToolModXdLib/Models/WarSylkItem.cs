@@ -164,16 +164,23 @@ namespace ToolModXdLib.Models
                 Source = this,
             };
 
-            foreach (var item in Columns)
+            res.Datas.Add(new CellData
             {
-                var cell = new CellData
-                {
-                    Key = item.ColumnId.ToString(),
-                    Value = item.Value,
-                    Data = this,
-                };
-                res.Datas.Add(cell);
-            }
+                Key = "0",
+                Value = "dummy",
+                Data = this,
+            });
+
+            //foreach (var item in Columns)
+            //{
+            //    var cell = new CellData
+            //    {
+            //        Key = item.ColumnId.ToString(),
+            //        Value = item.Value,
+            //        Data = this,
+            //    };
+            //    res.Datas.Add(cell);
+            //}
 
             return res;
         }

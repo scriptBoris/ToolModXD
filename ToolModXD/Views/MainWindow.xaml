@@ -47,17 +47,33 @@
                 <TextBlock Text="Save source"
                            Foreground="#BBBBBB"/>
             </Button>
+            
+            
             <Button
                 VerticalAlignment="Center"
                 HorizontalAlignment="Left"
                 Margin="5"
-                Command="{Binding Inject}"
+                Command="{Binding DoInject}"
                 Background="#444444"
                 BorderBrush="Blue">
                 <TextBlock Text="Do inject"
                        Foreground="#BBBBBB"/>
             </Button>
+
+            <Button
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Margin="5"
+                Command="{Binding SaveResult}"
+                Background="#444444"
+                BorderBrush="Blue">
+                <TextBlock Text="Save result"
+                       Foreground="#BBBBBB"/>
+            </Button>
+            
         </StackPanel>
+        
+        <!--Header target-->
         <StackPanel Orientation="Horizontal"
             Grid.Column="1"
             Grid.Row="0">
@@ -93,31 +109,36 @@
             BorderBrush="Black"
             Margin="10,10,5,10" 
             Height="Auto"
-            Width="Auto">
+            Width="Auto" IsSynchronizedWithCurrentItem="True">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
+                    
+                    <StackPanel 
+                        Margin="0">
                         <TextBlock Text="{Binding Header}"/>
                         <!--Datas-->
                         <ListBox 
-                            ScrollViewer.VerticalScrollBarVisibility="Auto"
+                            ScrollViewer.CanContentScroll="False"
                             ItemsSource="{Binding Datas}"
-                            ForceCursor="False"
                             Background="Transparent"
                             Foreground="#AAAAAA"
                             BorderBrush="Transparent"
-                            Margin="10,2,5,10" 
+                            Margin="0"
+                            Padding="0"
                             Height="Auto"
                             Width="Auto">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="0">
                                         <TextBlock Text="{Binding Key}"
-                                                   ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                                                   
-                                                   Style="{StaticResource listItemm}"/>
+                                                   Width="Auto"
+                                                   Margin="0"
+                                                   Padding="0"/>
                                         <TextBlock Text="="/>
-                                        <TextBox Text="{Binding Value, Mode=TwoWay}"/>
+                                        <TextBox Text="{Binding Value, Mode=TwoWay}"
+                                                 Foreground="Gray"
+                                                 Background="Transparent"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -129,17 +150,48 @@
 
         <ListBox 
             ItemsSource="{Binding TargetList}"
-            Grid.Column="1"
             Grid.Row="2"
+            Grid.Column="1"
             Background="#252525"
             Foreground="#AAAAAA"
             BorderBrush="Black"
             Margin="10,10,5,10" 
             Height="Auto"
-            Width="Auto">
+            Width="Auto" IsSynchronizedWithCurrentItem="True">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Text}"/>
+
+                    <StackPanel 
+                        Margin="0">
+                        <TextBlock Text="{Binding Header}"/>
+                        <!--Datas-->
+                        <ListBox 
+                            ScrollViewer.CanContentScroll="False"
+                            ItemsSource="{Binding Datas}"
+                            Background="Transparent"
+                            Foreground="#AAAAAA"
+                            BorderBrush="Transparent"
+                            Margin="0"
+                            Padding="0"
+                            Height="Auto"
+                            Width="Auto">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="0">
+                                        <TextBlock Text="{Binding Key}"
+                                                   Width="Auto"
+                                                   Margin="0"
+                                                   Padding="0"/>
+                                        <TextBlock Text="="/>
+                                        <TextBox Text="{Binding Value, Mode=TwoWay}"
+                                                 Foreground="Gray"
+                                                 Background="Transparent"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

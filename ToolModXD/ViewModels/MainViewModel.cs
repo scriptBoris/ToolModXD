@@ -18,10 +18,12 @@ namespace ToolModXdGui.ViewModels
     {
         private ToolMod _toolMod;
         private string _lastDir;
+        private string _targetName;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ObservableCollection<CellEditor> SourceList { get; set; } = new ObservableCollection<CellEditor>();
+        public ObservableCollection<CellEditor> TargetList { get; set; } = new ObservableCollection<CellEditor>();
 
         public ICommand OpenSource { get; set; }
 
@@ -31,12 +33,20 @@ namespace ToolModXdGui.ViewModels
 
         public ICommand SaveTarget { get; set; }
 
+        public ICommand DoInject { get; set; }
+
+        public ICommand SaveResult { get; set; }
+
         public string TextLog { get; set; }
 
         public MainViewModel()
         {
-            OpenSource = new Command(SelectFile);
+            OpenSource = new Command(SelectSourceExe);
             SaveSource = new Command(SaveSourceExe);
+            OpenTarget = new Command(SelectTargetExe);
+            SaveTarget = new Command(SaveTargetExe);
+            DoInject = new Command(DoInjectExe);
+            SaveResult = new Command(SaveResultExe);
         }
 
         private void OnEventMessanger(string msg)
@@ -44,7 +54,7 @@ namespace ToolModXdGui.ViewModels
             TextLog += msg + Environment.NewLine;
         }
 
-        private async void SelectFile()
+        private async void SelectSourceExe()
         {
             var openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Text files (*.txt)|*.txt|Table SYLK (*.slk)|*.slk";
@@ -66,7 +76,7 @@ namespace ToolModXdGui.ViewModels
                     _toolMod.Init();
                 });
 
-                SourceList = new ObservableCollection<CellEditor>(_toolMod.GetCellsEditor() );
+                //SourceList = new ObservableCollection<CellEditor>(_toolMod.GetCellsForSourceEditor() );
             }
         }
 
@@ -88,6 +98,55 @@ namespace ToolModXdGui.ViewModels
 
                 _toolMod.SaveResult(saveFileDialog.FileName);
             }
+        }
+
+        private async void SelectTargetExe()
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Text files (*.txt)|*.txt|Table SYLK (*.slk)|*.slk";
+
+            if (_lastDir == null)
+                _lastDir = Environment.CurrentDirectory;
+
+            openFileDialog.InitialDirectory = _lastDir;
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string path = openFileDialog.FileName;
+                _lastDir = Path.GetDirectoryName(path);
+                await Task.Run(() =>
+                {
+                    _toolMod.LoadTarget(path);
+                });
+
+                //TargetList = new ObservableCollection<CellEditor>(_toolMod.GetCellsForTargetEditor());
+                _targetName = Path.GetFileName(path);
+            }
+        }
+
+        private async void SaveTargetExe()
+        {
+
+        }
+
+        private async void DoInjectExe()
+        {
+            await Task.Run(() =>
+            {
+                //_toolMod.LoadTarget(path);
+                _toolMod.Inject();
+            });
+        }
+
+        private async void SaveResultExe()
+        {
+            var saveFileDialog = new SaveFileDialog();
+            saveFileDialog.FileName = _targetName;
+            saveFileDialog.Filter = "Text file (*.txt)|*.txt|C# file (*.cs)|*.cs";
+
+            saveFileDialog.InitialDirectory = _lastDir;
+            if (saveFileDialog.ShowDialog() == true)
+                _toolMod.SaveResult(saveFileDialog.FileName);
         }
     }
 }

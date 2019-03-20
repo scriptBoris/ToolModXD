@@ -50,9 +50,15 @@ namespace ToolModXdLib
         void GetDataForListfile(ListFileInjector injector);
 
         /// <summary>
-        /// Получает ячейку для редактирования в GUI
+        /// Получает список ячеек для редактирования в GUI из SourceList
         /// </summary>
         /// <returns></returns>
-        List<CellEditor> GetCellsEditor();
+        List<CellEditor> GetCellsForSourceEditor();
+
+        /// <summary>
+        /// Получает список ячеек для редактирования в GUI из TargetList
+        /// </summary>
+        /// <returns></returns>
+        List<CellEditor> GetCellsForTargetEditor();
     }
 }

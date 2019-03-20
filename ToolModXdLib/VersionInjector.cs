@@ -217,12 +217,22 @@ namespace ToolModXdLib
             }
         }
 
-        public List<CellEditor> GetCellsEditor()
+        public List<CellEditor> GetCellsForSourceEditor()
         {
             var res = new List<CellEditor>();
             foreach (var item in _listSource)
             {
                 res.Add(item.GetCellEditor() );
+            }
+            return res;
+        }
+
+        public List<CellEditor> GetCellsForTargetEditor()
+        {
+            var res = new List<CellEditor>();
+            foreach (var item in _listTarget)
+            {
+                res.Add(item.GetCellEditor());
             }
             return res;
         }

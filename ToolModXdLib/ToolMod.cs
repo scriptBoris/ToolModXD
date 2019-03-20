@@ -36,8 +36,11 @@ namespace ToolModXdLib
 
         public void Init()
         {
+            EventMessanger?.Invoke($"\nStart load origin: {_origin}");
             _protocol.Read(_origin);
             _protocol.Objectivation(false);
+            EventMessanger?.Invoke($"\nFinish load origin: {_origin}");
+
             EventMessanger?.Invoke("ToolModXd is ready\n");
         }
 
@@ -46,12 +49,14 @@ namespace ToolModXdLib
             _target = path;
             EventMessanger?.Invoke($"\nStart load target: {path}");
             _protocol.LoadTarget(path);
+            EventMessanger?.Invoke($"\nFinish load target: {path}");
         }
 
         public void Inject()
         {
             EventMessanger?.Invoke($"\nStart inject target: {_origin} to -> {_target}");
             _protocol.Inject();
+            EventMessanger?.Invoke($"\nFinish inject target: {_origin} to -> {_target}");
         }
 
         public void SaveResult(string dirPath)
@@ -61,6 +66,10 @@ namespace ToolModXdLib
             EventMessanger?.Invoke($"\nCOMPLETE!");
         }
 
+        /// <summary>
+        /// Получить список данных для listFile путем обработки списка данных, полученного путем Objectivation
+        /// </summary>
+        /// <param name="injector">Лист в который необходимо добавить найденные данные</param>
         public void GetDataForListfile(ListFileInjector injector)
         {
             _protocol.GetDataForListfile(injector);
@@ -71,9 +80,15 @@ namespace ToolModXdLib
             EventMessanger?.Invoke(msg);
         }
 
-        public List<CellEditor> GetCellsEditor()
+        public List<CellEditor> GetCellsForSourceEditor()
         {
-            return _protocol.GetCellsEditor();
+            var res = _protocol.GetCellsForSourceEditor();
+            return res;
+        }
+
+        public List<CellEditor> GetCellsForTargetEditor()
+        {
+            return _protocol.GetCellsForTargetEditor();
         }
 
         private void OnEventMessanger(string msg)
